@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "554955054465",
+    "project_id": "autoresq-bbdeb",
+    "storage_bucket": "autoresq-bbdeb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:554955054465:android:a873c9a772198524039c80",
+        "android_client_info": {
+          "package_name": "com.example.mini_project_1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAIYFyHcgm2WQKz6Jn1KjAE-kpBEyYOS0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
