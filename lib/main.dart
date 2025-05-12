@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mini_project_1/common_screens/splash_screen.dart';
 import 'package:mini_project_1/firebase_options.dart';
-import 'package:mini_project_1/auth_pages/multi_register.dart';
-import 'package:mini_project_1/user/view/screens/user_navbar_page.dart';
 
 late Size mq;
 void main() async {
