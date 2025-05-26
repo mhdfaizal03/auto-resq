@@ -69,48 +69,7 @@ class _MechanicProfilePageState extends State<MechanicProfilePage> {
       future: getMechanicData(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Shimmer.fromColors(
-              baseColor: Colors.grey[300]!,
-              highlightColor: Colors.grey[100]!,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  CircleAvatar(
-                    radius: mq.width * 0.15,
-                    backgroundColor: Colors.white,
-                  ),
-                  SizedBox(height: 20),
-                  Container(
-                    height: 20,
-                    width: 150,
-                    color: Colors.white,
-                  ),
-                  SizedBox(height: 10),
-                  Container(
-                    height: 16,
-                    width: 100,
-                    color: Colors.white,
-                  ),
-                  SizedBox(height: 30),
-                  ...List.generate(
-                      3,
-                      (index) => Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: Container(
-                              height: 60,
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                          )),
-                ],
-              ),
-            ),
-          );
+          return buildShimmerProfileUI();
         }
 
         if (!snapshot.hasData || snapshot.data == null) {
@@ -168,7 +127,7 @@ class _MechanicProfilePageState extends State<MechanicProfilePage> {
                       );
                     }
                   },
-                  child: mechanic_profile.ProfileCards(
+                  child: ProfileCards(
                     Icon(Icons.arrow_forward_ios_rounded, size: 18),
                     image: item['leading'],
                     title: item['title'],

@@ -354,59 +354,5 @@ class _ProfessionalDetailsEditPageState
         );
       },
     );
-    // showDialog(
-    //   context: context,
-    //   builder: (context) {
-    //     return StatefulBuilder(builder: (context, setStateDialog) {
-    //       return CustomSpecificationsDialog(
-    //         headerItems: Padding(
-    //           padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-    //           child: Text('Select Specializations',
-    //               style: TextStyle(fontWeight: FontWeight.bold)),
-    //         ),
-    //         context: context,
-    //         children: specifications.map((spec) {
-    //           final isSelected = selectedItems.contains(spec);
-    //           return Column(
-    //             children: [
-    //               Divider(),
-    //               ListTile(
-    //                 title: Text(spec),
-    //                 trailing: Icon(
-    //                   isSelected ? Icons.check_circle : Icons.circle_outlined,
-    //                   color: isSelected ? Colors.green : null,
-    //                 ),
-    //                 onTap: () {
-    //                   setStateDialog(() {
-    //                     if (isSelected) {
-    //                       selectedItems.remove(spec);
-    //                     } else if (selectedItems.length < 6) {
-    //                       selectedItems.add(spec);
-    //                     }
-    //                   });
-    //                 },
-    //               ),
-    //             ],
-    //           );
-    //         }).toList(),
-    //         actionButton: MaterialButton(
-    //           height: 55,
-    //           color: primaryColor,
-    //           shape: const RoundedRectangleBorder(
-    //             borderRadius:
-    //                 BorderRadius.vertical(bottom: Radius.circular(10)),
-    //           ),
-    //           onPressed: () {
-    //             setState(() {
-    //               specializationController.text = selectedItems.join(', ');
-    //             });
-    //             Navigator.pop(context);
-    //           },
-    //           child: const Text('Save', style: TextStyle(color: Colors.white)),
-    //         ),
-    //       );
-    //     });
-    //   },
-    // );
   }
 }

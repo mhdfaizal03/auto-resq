@@ -7,8 +7,7 @@ import 'package:mini_project_1/user/view/screens/user_shop.dart';
 import 'package:mini_project_1/utils/colors.dart';
 
 class UserNavPage extends StatefulWidget {
-  int? selectedIndex;
-  UserNavPage({this.selectedIndex = 0, super.key});
+  UserNavPage({super.key});
 
   @override
   State<UserNavPage> createState() => _UserNavPageState();
@@ -22,7 +21,7 @@ class _UserNavPageState extends State<UserNavPage> {
     UserProfile(),
   ];
 
-  // int selectedIndex = 0;
+  static int selectedIndex = 0;
 
   List<Map<String, dynamic>> bottomIcons = [
     {
@@ -47,7 +46,7 @@ class _UserNavPageState extends State<UserNavPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: widget.selectedIndex == 0
+      floatingActionButton: selectedIndex == 0
           ? Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15.0),
               child: MaterialButton(
@@ -82,10 +81,10 @@ class _UserNavPageState extends State<UserNavPage> {
           selectedItemColor: primaryColor,
           type: BottomNavigationBarType.fixed,
           selectedLabelStyle: TextStyle(color: primaryColor),
-          currentIndex: widget.selectedIndex ?? 0,
+          currentIndex: selectedIndex,
           onTap: (value) {
             setState(() {
-              widget.selectedIndex = value;
+              selectedIndex = value;
             });
           },
           items: List.generate(
@@ -134,7 +133,7 @@ class _UserNavPageState extends State<UserNavPage> {
                 SizedBox(
                   height: 10,
                 ),
-                pages[widget.selectedIndex ?? 0],
+                pages[selectedIndex],
               ],
             ),
           ),

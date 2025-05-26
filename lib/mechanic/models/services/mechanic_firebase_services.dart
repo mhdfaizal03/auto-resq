@@ -9,20 +9,6 @@ class FirebaseServices {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   // final FirebaseStorage _storage = FirebaseStorage.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
-  // Future<String> uploadImageToStorage({
-  //   required Uint8List imageBytes,
-  //   required String fileName,
-  //   required String folder,
-  // }) async {
-  //   Reference ref = _storage.ref().child(folder).child(fileName);
-  //   UploadTask uploadTask = ref.putData(imageBytes);
-  //   TaskSnapshot snapshot = await uploadTask;
-  //   String downloadUrl = await snapshot.ref.getDownloadURL();
-  //   return downloadUrl;
-  // }
-
-  /// Saves professional details to Firestore under 'mechanics' collection
   Future<void> saveProfessionalDetails({
     required String workshopName,
     required String workshopAddress,
@@ -41,6 +27,7 @@ class FirebaseServices {
       'idProofName': idProofName,
       'profileImageUrl': profileImageUrl,
       'professionalDataCompleted': true,
+      'isAdminAccept': 0,
       'timestamp': FieldValue.serverTimestamp(),
     });
   }

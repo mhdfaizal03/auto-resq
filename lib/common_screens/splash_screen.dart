@@ -1,13 +1,16 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:mini_project_1/admin/view/screens/home/admin_navbar_screen.dart';
 
 import 'package:mini_project_1/auth_pages/multi_login.dart';
 import 'package:mini_project_1/mechanic/view/auth/create_account/professional_details_page.dart';
-import 'package:mini_project_1/shop/screens/shop_home.dart';
 import 'package:mini_project_1/shop/screens/shop_navbar_page.dart';
 import 'package:mini_project_1/user/view/screens/user_navbar_page.dart';
 import 'package:mini_project_1/mechanic/view/screens/mechanic_navbar_page.dart';
+import 'package:mini_project_1/utils/messages.dart';
+import 'package:mini_project_1/utils/widgets.dart';
 
 class SplashIconScreen extends StatefulWidget {
   const SplashIconScreen({super.key});
@@ -80,8 +83,6 @@ class SplashInnerScreen extends StatefulWidget {
 }
 
 class _SplashInnerScreenState extends State<SplashInnerScreen> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
   @override
   void initState() {
     super.initState();
@@ -89,12 +90,28 @@ class _SplashInnerScreenState extends State<SplashInnerScreen> {
   }
 
   void _navigateUser() async {
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 2));
     if (!mounted) return;
 
-    final user = _auth.currentUser;
+    var connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult == ConnectivityResult.none) {
+      if (!mounted) return;
+      CustomSnackBar.show(
+        context: context,
+        message: 'No internet connection. Please try again.',
+        color: Colors.red,
+      );
+      await Future.delayed(const Duration(seconds: 2));
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => MultiLoginPage()),
+        (route) => false,
+      );
+      return;
+    }
+
+    final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
-      // Not logged in
       Navigator.pushAndRemoveUntil(
         context,
         PageRouteBuilder(
@@ -114,8 +131,14 @@ class _SplashInnerScreenState extends State<SplashInnerScreen> {
       final mechanicDoc =
           await firestore.collection('mechanics').doc(uid).get();
       final shopDoc = await firestore.collection('shops').doc(uid).get();
+      final adminDoc = await firestore.collection('admins').doc(uid).get();
 
-      if (userDoc.exists && userDoc.data()?['role'] == 'User') {
+      final userData = userDoc.data();
+      final mechanicData = mechanicDoc.data();
+      final shopData = shopDoc.data();
+      final adminData = adminDoc.data();
+
+      if (userData != null && userData['role'] == 'User') {
         Navigator.pushAndRemoveUntil(
           context,
           PageRouteBuilder(
@@ -124,31 +147,56 @@ class _SplashInnerScreenState extends State<SplashInnerScreen> {
           ),
           (route) => false,
         );
-      } else if (mechanicDoc.exists &&
-          mechanicDoc.data()?['role'] == 'Mechanic') {
-        final isCompleted =
-            mechanicDoc.data()?['professionalDataCompleted'] ?? false;
+      } else if (mechanicData != null && mechanicData['role'] == 'Mechanic') {
+        final isCompleted = mechanicData['professionalDataCompleted'] ?? false;
+        final isAccepted = mechanicData['isAdminAccept'] ?? 0;
 
-        if (isCompleted) {
+        if (isAccepted == 1) {
+          if (isCompleted) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              PageRouteBuilder(
+                transitionDuration: const Duration(milliseconds: 1500),
+                pageBuilder: (_, __, ___) =>
+                    MechanicNavbarPage(selectedIndex: 0),
+              ),
+              (route) => false,
+            );
+          } else {
+            Navigator.pushAndRemoveUntil(
+              context,
+              PageRouteBuilder(
+                transitionDuration: const Duration(milliseconds: 1500),
+                pageBuilder: (_, __, ___) => ProfessionalDetailsPage(),
+              ),
+              (route) => false,
+            );
+          }
+        } else if (isAccepted == 0) {
+          CustomSnackBar.show(
+            context: context,
+            message: 'Your request is under pending',
+          );
+          await Future.delayed(const Duration(seconds: 2));
           Navigator.pushAndRemoveUntil(
             context,
-            PageRouteBuilder(
-              transitionDuration: const Duration(milliseconds: 1500),
-              pageBuilder: (_, __, ___) => MechanicNavbarPage(selectedIndex: 0),
-            ),
+            MaterialPageRoute(builder: (_) => MultiLoginPage()),
             (route) => false,
           );
-        } else {
+        } else if (isAccepted == 2) {
+          CustomSnackBar.show(
+            context: context,
+            message:
+                'Your request has been rejected by admin due to some reason',
+          );
+          await Future.delayed(const Duration(seconds: 2));
           Navigator.pushAndRemoveUntil(
             context,
-            PageRouteBuilder(
-              transitionDuration: const Duration(milliseconds: 1500),
-              pageBuilder: (_, __, ___) => ProfessionalDetailsPage(),
-            ),
+            MaterialPageRoute(builder: (_) => MultiLoginPage()),
             (route) => false,
           );
         }
-      } else if (shopDoc.exists && shopDoc.data()?['role'] == 'Shop') {
+      } else if (shopData != null && shopData['role'] == 'Shop') {
         Navigator.pushAndRemoveUntil(
           context,
           PageRouteBuilder(
@@ -157,8 +205,16 @@ class _SplashInnerScreenState extends State<SplashInnerScreen> {
           ),
           (route) => false,
         );
+      } else if (adminData != null && adminData['role'] == 'Admin') {
+        Navigator.pushAndRemoveUntil(
+          context,
+          PageRouteBuilder(
+            transitionDuration: const Duration(milliseconds: 1500),
+            pageBuilder: (_, __, ___) => AdminNavbarScreen(),
+          ),
+          (route) => false,
+        );
       } else {
-        // Unknown role or data missing
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (_) => MultiLoginPage()),

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mini_project_1/admin/view/screens/home/admin_navbar_screen.dart';
 import 'package:mini_project_1/all_auth_services/firebase_auth_services.dart';
 import 'package:mini_project_1/auth_pages/multi_register.dart';
 import 'package:mini_project_1/mechanic/view/auth/create_account/professional_details_page.dart';
@@ -56,16 +57,35 @@ class _MultiLoginPageState extends State<MultiLoginPage> {
               .doc(uid)
               .get();
 
+          final data = doc.data();
           final isProfessionalDataCompleted =
-              doc.exists && doc.data()?['professionalDataCompleted'] == true;
-          print(
-              "professionalDataCompleted: ${doc.data()?['professionalDataCompleted']}");
+              data != null && data['professionalDataCompleted'] == true;
+          final isAccepted = data!['isAdminAccept'];
 
           if (isProfessionalDataCompleted) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (_) => MechanicNavbarPage()),
-            );
+            if (isAccepted == 1) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => MechanicNavbarPage()),
+              );
+            } else if (isAccepted == 0) {
+              CustomSnackBar.show(
+                context: context,
+                message: 'Your account is under review by admin.',
+                icon: Icons.hourglass_top,
+              );
+              _emailController.clear();
+              _passwordController.clear();
+            } else if (isAccepted == 2) {
+              CustomSnackBar.show(
+                context: context,
+                message:
+                    'Your account is rejected by admin due to some issues.',
+                icon: Icons.hourglass_top,
+              );
+              _emailController.clear();
+              _passwordController.clear();
+            }
           } else {
             Navigator.pushReplacement(
               context,
@@ -75,9 +95,30 @@ class _MultiLoginPageState extends State<MultiLoginPage> {
         } else if (role == 'Shop') {
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (_) => ShopNavbarPage()));
+          CustomSnackBar.show(
+            context: context,
+            message: 'Login Successful',
+            icon: Icons.check_circle_outline_rounded,
+            color: Colors.green,
+          );
+        } else if (role == 'Admin') {
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (_) => AdminNavbarScreen()));
+          CustomSnackBar.show(
+            context: context,
+            message: 'Login Successful',
+            icon: Icons.check_circle_outline_rounded,
+            color: Colors.green,
+          );
         } else if (role == 'User') {
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (_) => UserNavPage()));
+          CustomSnackBar.show(
+            context: context,
+            message: 'Login Successful',
+            icon: Icons.check_circle_outline_rounded,
+            color: Colors.green,
+          );
         } else {
           CustomSnackBar.show(
             context: context,
@@ -85,13 +126,6 @@ class _MultiLoginPageState extends State<MultiLoginPage> {
             icon: Icons.warning_amber_rounded,
           );
         }
-
-        CustomSnackBar.show(
-          context: context,
-          message: 'Login Successful',
-          icon: Icons.check_circle_outline_rounded,
-          color: Colors.green,
-        );
       } else {
         CustomSnackBar.show(
           context: context,

@@ -15,3 +15,18 @@ Color? pickColor(String data) {
                   : color = Colors.green;
   return color;
 }
+
+Color getStatusColor(String status) {
+  switch (status.toLowerCase()) {
+    case 'pending':
+      return Colors.orange;
+    case 'packed':
+      return Colors.red;
+    case 'confirmed':
+      return Colors.amber;
+    case 'delivered':
+      return Colors.green;
+    default:
+      return Colors.grey;
+  }
+}

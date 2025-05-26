@@ -4,13 +4,14 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:mini_project_1/main.dart';
 import 'package:mini_project_1/utils/colors.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 class CustomTextField extends StatelessWidget {
   String? text;
   String? Function(String?)? validator;
   String? Function(String?)? onChanged;
-  TextEditingController controller;
+  TextEditingController? controller;
   int? minLines;
   int? maxLines;
   Widget? suffix;
@@ -19,8 +20,8 @@ class CustomTextField extends StatelessWidget {
   CustomTextField({
     super.key,
     this.text,
-    required this.validator,
-    required this.controller,
+    this.validator,
+    this.controller,
     this.minLines = 1,
     this.maxLines = 1,
     this.suffix = null,
@@ -56,18 +57,19 @@ class CustomTextField extends StatelessWidget {
 class CustomMaterialButtom extends StatelessWidget {
   Function()? onPressed;
   String buttonText;
-  CustomMaterialButtom({
-    super.key,
-    required this.onPressed,
-    required this.buttonText,
-  });
+  Color? color;
+  CustomMaterialButtom(
+      {super.key,
+      required this.onPressed,
+      required this.buttonText,
+      this.color});
 
   @override
   Widget build(BuildContext context) {
     return MaterialButton(
       height: 50,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      color: primaryColor,
+      color: color ?? primaryColor,
       onPressed: onPressed,
       child: Center(
         child: Text(
@@ -202,7 +204,7 @@ class CustomMechanicCards extends StatelessWidget {
   final String place;
   final String phone;
   final String services_count;
-  final bool isAccepted;
+  final int isAccepted;
 
   const CustomMechanicCards({
     super.key,
@@ -284,10 +286,18 @@ class CustomMechanicCards extends StatelessWidget {
                         decoration: BoxDecoration(
                             borderRadius:
                                 BorderRadius.circular(mq.width * 0.125),
-                            color: isAccepted ? Colors.green : Colors.red),
+                            color: isAccepted == 0
+                                ? Colors.orange
+                                : isAccepted == 1
+                                    ? Colors.green
+                                    : Colors.red),
                         child: Center(
                           child: Text(
-                            isAccepted ? 'Accepted' : 'Rejected',
+                            isAccepted == 0
+                                ? 'Pending'
+                                : isAccepted == 1
+                                    ? 'Accepted'
+                                    : 'Rejected',
                             style: TextStyle(color: Colors.white),
                           ),
                         ),
@@ -323,7 +333,7 @@ class CustomWalletCards extends StatefulWidget {
   });
 
   @override
-  _CustomWalletCardsState createState() => _CustomWalletCardsState();
+  State<CustomWalletCards> createState() => _CustomWalletCardsState();
 }
 
 class _CustomWalletCardsState extends State<CustomWalletCards> {
@@ -332,10 +342,11 @@ class _CustomWalletCardsState extends State<CustomWalletCards> {
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
-      width: double.infinity,
-      duration: Duration(milliseconds: 300),
-      margin: EdgeInsets.all(5),
+      duration: const Duration(milliseconds: 300),
+      margin: const EdgeInsets.all(5),
+      padding: EdgeInsets.all(mq.width * 0.040),
       decoration: BoxDecoration(
+        color: Colors.white,
         borderRadius: BorderRadius.circular(mq.width * 0.025),
         boxShadow: [
           BoxShadow(
@@ -344,56 +355,38 @@ class _CustomWalletCardsState extends State<CustomWalletCards> {
             blurRadius: 6,
           ),
         ],
-        color: Colors.white,
       ),
-      padding: EdgeInsets.all(mq.width * .040),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Top Info Row
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // From & To
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('From(User)'),
-                    SizedBox(height: 5),
-                    Text(
-                      widget.fromUserName.toString(),
-                      style: TextStyle(
-                        fontSize: mq.width * 0.045,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    Text('To(Mechanic)'),
-                    SizedBox(height: 5),
-                    Text(
-                      widget.toMechanicName.toString(),
-                      style: TextStyle(
-                        fontSize: mq.width * 0.045,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 10),
+                    _labelValue('From (User)', widget.fromUserName),
+                    SizedBox(height: mq.height * 0.01),
+                    _labelValue('To (Mechanic)', widget.toMechanicName),
                   ],
                 ),
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
+              // Date, Amount, Status
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     widget.date,
                     style: TextStyle(
-                      fontSize: mq.width * 0.045,
+                      fontSize: mq.width * 0.040,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 10),
+                  SizedBox(height: mq.height * 0.01),
                   Text(
                     widget.amount,
                     style: TextStyle(
@@ -401,25 +394,28 @@ class _CustomWalletCardsState extends State<CustomWalletCards> {
                       fontWeight: FontWeight.w900,
                     ),
                   ),
-                  SizedBox(height: 30),
+                  SizedBox(height: mq.height * 0.015),
                   Container(
-                    height: mq.height * 0.035,
-                    padding: EdgeInsets.symmetric(horizontal: mq.width * .055),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: mq.width * 0.045,
+                      vertical: mq.height * 0.005,
+                    ),
                     decoration: BoxDecoration(
-                        color: widget.status == 'Pending'
-                            ? Colors.red
-                            : Colors.green,
-                        borderRadius: BorderRadius.circular(50)),
-                    child: Center(
-                      child: Text(
-                        widget.status == 'Pending'
-                            ? 'Pending'
-                            : 'Work Completed',
-                        style: TextStyle(
-                          fontSize: mq.width * 0.040,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                      color: widget.status == 'Pending' ||
+                              widget.status == "Mechanic Picked"
+                          ? Colors.red
+                          : Colors.green,
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    child: Text(
+                      widget.status == 'Pending' ||
+                              widget.status == "Mechanic Picked"
+                          ? 'Pending'
+                          : 'Work Completed',
+                      style: TextStyle(
+                        fontSize: mq.width * 0.037,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -427,6 +423,10 @@ class _CustomWalletCardsState extends State<CustomWalletCards> {
               ),
             ],
           ),
+
+          const SizedBox(height: 12),
+
+          // Expandable Service Section
           GestureDetector(
             onTap: () {
               setState(() {
@@ -438,9 +438,10 @@ class _CustomWalletCardsState extends State<CustomWalletCards> {
                 Text(
                   'Service Requested',
                   style: TextStyle(
-                      fontSize: mq.width * .045,
-                      fontWeight: FontWeight.bold,
-                      color: primaryColor),
+                    fontSize: mq.width * 0.045,
+                    fontWeight: FontWeight.bold,
+                    color: primaryColor,
+                  ),
                 ),
                 Icon(
                   isExpanded
@@ -451,42 +452,65 @@ class _CustomWalletCardsState extends State<CustomWalletCards> {
               ],
             ),
           ),
+
           AnimatedSize(
-            duration: Duration(milliseconds: 100),
-            curve: Curves.linear,
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeInOut,
             child: isExpanded
-                ? Column(
-                    children: [
-                      SizedBox(height: 10),
-                      Wrap(
-                        spacing: 5,
-                        runSpacing: 5,
-                        children: widget.services.map((service) {
-                          return Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: mq.width * 0.040,
-                              vertical: mq.width * 0.018,
+                ? Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Wrap(
+                      spacing: 6,
+                      runSpacing: 6,
+                      children: widget.services.map((service) {
+                        return Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: mq.width * 0.040,
+                            vertical: mq.width * 0.018,
+                          ),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(50),
+                            color: Colors.grey[300],
+                          ),
+                          child: Text(
+                            service,
+                            style: TextStyle(
+                              fontSize: mq.width * 0.037,
+                              fontWeight: FontWeight.bold,
                             ),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(50),
-                              color: Colors.grey[300],
-                            ),
-                            child: Text(
-                              service,
-                              style: TextStyle(
-                                fontSize: mq.width * 0.037,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                    ],
+                          ),
+                        );
+                      }).toList(),
+                    ),
                   )
-                : SizedBox(),
+                : const SizedBox(),
           ),
         ],
       ),
+    );
+  }
+
+  // Helper widget for label and value display
+  Widget _labelValue(String label, String? value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: mq.width * 0.035,
+            color: Colors.grey[600],
+          ),
+        ),
+        const SizedBox(height: 3),
+        Text(
+          value ?? 'N/A',
+          style: TextStyle(
+            fontSize: mq.width * 0.045,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -556,7 +580,7 @@ class CustomMechanicRequestCards extends StatelessWidget {
     if (index == 0) {
       statusText = 'Pending';
       statusColor = Colors.orange;
-    } else if (isAccepted) {
+    } else if (index == 1) {
       statusText = 'Accepted';
       statusColor = Colors.green;
     } else {
@@ -619,7 +643,7 @@ class CustomMechanicRequestCards extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        services_count,
+                        '${int.parse(services_count) > 10 ? '10+' : services_count} Services',
                         style: TextStyle(
                           fontSize: mq.width * 0.033,
                           fontWeight: FontWeight.bold,
@@ -810,12 +834,10 @@ class _CustomMechaniRequestCardsState extends State<CustomMechaniRequestCards> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// Header row with mechanic info and status
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /// Mechanic info
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -842,10 +864,7 @@ class _CustomMechaniRequestCardsState extends State<CustomMechaniRequestCards> {
                   ],
                 ),
               ),
-
               const SizedBox(width: 10),
-
-              /// Date, Time, Status
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
@@ -887,10 +906,7 @@ class _CustomMechaniRequestCardsState extends State<CustomMechaniRequestCards> {
               ),
             ],
           ),
-
           const SizedBox(height: 10),
-
-          /// Service toggle
           InkWell(
             onTap: () {
               setState(() {
@@ -917,8 +933,6 @@ class _CustomMechaniRequestCardsState extends State<CustomMechaniRequestCards> {
               ],
             ),
           ),
-
-          /// Expanded service list
           AnimatedSize(
             duration: const Duration(milliseconds: 200),
             curve: Curves.linear,
@@ -1468,21 +1482,25 @@ class ProfileCards extends StatelessWidget {
 class ShopCards extends StatelessWidget {
   String? productName;
   String? productPrice;
+  String? actualPrice;
   String? productQuantity;
   String? productImage;
   String? deliveryDate;
   String? deliveryStatus;
   Color? deliveryStatusColor;
+  Widget bottomData;
 
   ShopCards({
     super.key,
     required this.productName,
     required this.productPrice,
+    required this.actualPrice,
     required this.productImage,
     required this.productQuantity,
     required this.deliveryDate,
     required this.deliveryStatus,
     required this.deliveryStatusColor,
+    required this.bottomData,
   });
 
   @override
@@ -1548,17 +1566,30 @@ class ShopCards extends StatelessWidget {
                       SizedBox(
                         height: 5,
                       ),
-                      Text(
-                        '₹${productPrice.toString()}',
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
+                      Row(
+                        children: [
+                          Text(
+                            '₹${productPrice.toString()}',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Text(
+                            '₹${actualPrice.toString()}',
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red,
+                                decoration: TextDecoration.lineThrough,
+                                decorationColor: Colors.red),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                  Text(
-                    'Delivery in ${deliveryDate.toString()}',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
+                  bottomData
                 ],
               ),
             )
@@ -1568,6 +1599,86 @@ class ShopCards extends StatelessWidget {
     );
   }
 }
+
+Widget buildShimmerProfileUI() {
+    return Padding(
+      padding: const EdgeInsets.all(15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const SizedBox(height: 20),
+          Shimmer.fromColors(
+            baseColor: Colors.grey[300]!,
+            highlightColor: Colors.grey[100]!,
+            child: CircleAvatar(
+              radius: mq.width * 0.15,
+              backgroundColor: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 30),
+          Shimmer.fromColors(
+            baseColor: Colors.grey[300]!,
+            highlightColor: Colors.grey[100]!,
+            child: Container(
+              width: 150,
+              height: 20,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Shimmer.fromColors(
+            baseColor: Colors.grey[300]!,
+            highlightColor: Colors.grey[100]!,
+            child: Container(
+              width: 80,
+              height: 15,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 30),
+          Column(
+            children: List.generate(3, (index) {
+              return Shimmer.fromColors(
+                baseColor: Colors.grey[300]!,
+                highlightColor: Colors.grey[100]!,
+                child: Container(
+                  height: mq.height * 0.068,
+                  margin: const EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(mq.width * 0.025),
+                    color: Colors.white,
+                  ),
+                ),
+              );
+            }),
+          ),
+          const SizedBox(height: 50),
+          Shimmer.fromColors(
+            baseColor: Colors.grey[300]!,
+            highlightColor: Colors.grey[100]!,
+            child: Container(
+              height: mq.height * 0.070,
+              margin: const EdgeInsets.all(5),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(mq.width * 0.025),
+                color: Colors.white,
+              ),
+            ),
+          ),
+          const Spacer(),
+          Shimmer.fromColors(
+            baseColor: Colors.grey[300]!,
+            highlightColor: Colors.grey[100]!,
+            child: Container(
+              width: 100,
+              height: 15,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
 Widget customLoading() {
   return Center(

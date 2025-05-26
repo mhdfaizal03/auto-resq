@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mini_project_1/admin/view/screens/home/admin_navbar_screen.dart';
 import 'package:mini_project_1/all_auth_services/firebase_auth_services.dart';
 import 'package:mini_project_1/auth_pages/multi_login.dart';
 import 'package:mini_project_1/mechanic/view/auth/create_account/professional_details_page.dart';
@@ -30,7 +31,11 @@ class _MultiRoleRegisterPageState extends State<MultiRoleRegisterPage> {
   final confirmPasswordController = TextEditingController();
 
   String selectedRole = 'User';
-  final roles = ['User', 'Mechanic', 'Shop'];
+  final roles = [
+    'User',
+    'Mechanic',
+    'Shop',
+  ];
 
   @override
   void dispose() {
@@ -213,14 +218,6 @@ class _MultiRoleRegisterPageState extends State<MultiRoleRegisterPage> {
 
                     if (error == null) {
                       if (selectedRole == 'Mechanic') {
-                        // await FirebaseFirestore.instance
-                        //     .collection('mechanics')
-                        //     .doc(user)
-                        //     .update({
-                        //   'uid': user,
-                        //   'professionalDataCompleted': false,
-                        //   'timestamp': FieldValue.serverTimestamp(),
-                        // });
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(builder: (_) => MultiLoginPage()),
@@ -234,6 +231,12 @@ class _MultiRoleRegisterPageState extends State<MultiRoleRegisterPage> {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(builder: (_) => UserNavPage()),
+                        );
+                      } else if (selectedRole == 'Admin') {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => AdminNavbarScreen()),
                         );
                       }
                     } else {

@@ -85,24 +85,28 @@ class _MechanicHomePageState extends State<MechanicHomePage> {
                 return const Text('No data found');
               }
 
+              final uid = FirebaseAuth.instance.currentUser!.uid;
               final filtered = snapshot.data!.docs.where((req) {
-                final uid = FirebaseAuth.instance.currentUser!.uid;
                 final data = req.data() as Map<String, dynamic>;
                 final status = data['status'];
-                final assignedId = data.containsKey('assignedMechanicId')
-                    ? data['assignedMechanicId']
-                    : '';
+                final assignedId = data['assignedMechanicId'];
 
                 if (selectedIndex == 0) {
                   return status == 'Requested' || status == 'Pending';
                 } else {
-                  return status != 'Requested' ||
-                      status != 'Pending' && assignedId == uid;
+                  return assignedId == uid;
                 }
               }).toList();
 
-              if (filtered.isEmpty || snapshot.data!.docs.isEmpty) {
-                return Center(child: const Text('No data found'));
+              if (filtered.isEmpty) {
+                return Center(
+                  child: Text(
+                    selectedIndex == 0
+                        ? 'No new requests available.'
+                        : 'You have no accepted requests.',
+                    style: const TextStyle(fontSize: 16, color: Colors.grey),
+                  ),
+                );
               }
 
               return ListView.builder(

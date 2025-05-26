@@ -7,6 +7,7 @@ import 'package:mini_project_1/mechanic/view/auth/create_account/professional_de
 import 'package:mini_project_1/common_screens/profile_details.dart';
 import 'package:mini_project_1/all_auth_services/firebase_auth_services.dart';
 import 'package:mini_project_1/auth_pages/multi_login.dart';
+import 'package:mini_project_1/user/view/screens/my_orders_page.dart';
 import 'package:mini_project_1/user/view/screens/user_notification.dart';
 import 'package:mini_project_1/utils/messages.dart';
 import 'package:mini_project_1/utils/widgets.dart';
@@ -62,7 +63,7 @@ class _UserProfileState extends State<UserProfile> {
             'title': 'My Orders',
             'leading': 'assets/nav_icons/shop_unselected.png',
             'trialing': const Icon(Icons.arrow_forward_ios_rounded, size: 18),
-            'page': (context) => ProfessionalDetailsPage(),
+            'page': (context) => MyOrdersPage(),
           },
           {
             'title': 'Notifications',

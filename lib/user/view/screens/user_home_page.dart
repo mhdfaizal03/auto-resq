@@ -20,17 +20,14 @@ class UserHomePage extends StatefulWidget {
 }
 
 class _UserHomePageState extends State<UserHomePage> {
-  int selectIndex = 0;
+  static int selectIndex = 0;
   List<String> tabs = ['Requested', 'Completed & Rejected'];
 
   @override
   Widget build(BuildContext context) {
-    final mq = MediaQuery.of(context).size;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Tab navigation bar
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -80,8 +77,6 @@ class _UserHomePageState extends State<UserHomePage> {
           ),
         ),
         const SizedBox(height: 10),
-
-        // StreamBuilder for requests
         StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
               .collection('mechanic_requests')

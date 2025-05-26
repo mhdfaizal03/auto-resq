@@ -46,6 +46,8 @@ class FirebaseAuthServices {
         });
       } else if (role == 'Shop') {
         await _firestore.collection('shops').doc(uid).set(commonData);
+      } else if (role == 'Admin') {
+        await _firestore.collection('admins').doc(uid).set(commonData);
       }
 
       return null;
@@ -76,6 +78,9 @@ class FirebaseAuthServices {
 
       final shopDoc = await _firestore.collection('shops').doc(uid).get();
       if (shopDoc.exists) return 'Shop';
+
+      final adminDoc = await _firestore.collection('admins').doc(uid).get();
+      if (adminDoc.exists) return 'Admin';
 
       return null;
     } catch (e) {

@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mini_project_1/all_auth_services/string_images.dart';
+import 'package:mini_project_1/auth_pages/multi_login.dart';
 import 'package:mini_project_1/auth_pages/multi_register.dart';
 import 'package:mini_project_1/mechanic/models/services/mechanic_firebase_services.dart';
 import 'package:mini_project_1/utils/colors.dart';
@@ -335,11 +336,6 @@ class _ProfessionalDetailsPageState extends State<ProfessionalDetailsPage> {
                       if (_formKey.currentState!.validate() &&
                           selectedIndex != null) {
                         try {
-                          final StringImages stringImages = StringImages();
-                          final FirebaseImageService firebaseService =
-                              FirebaseImageService();
-                          String base64ProfileImage = await stringImages
-                              .fileBytesToBase64(profileImageBytes!);
                           await firebaseServices.saveProfessionalDetails(
                             workshopName: workshopNameController.text.trim(),
                             workshopAddress:
@@ -347,15 +343,14 @@ class _ProfessionalDetailsPageState extends State<ProfessionalDetailsPage> {
                             experience: experience[selectedIndex!],
                             specializations: selectedItems,
                             idProofName: idProofController.text.trim(),
-                            profileImageUrl: base64ProfileImage,
+                            profileImageUrl: '',
                           );
 
                           // Navigate and show success dialog
                           Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  const MultiRoleRegisterPage(),
+                              builder: (context) => MultiLoginPage(),
                             ),
                             (route) => false,
                           );

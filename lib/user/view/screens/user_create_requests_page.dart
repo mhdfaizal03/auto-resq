@@ -3,11 +3,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mini_project_1/all_auth_services/model/user_create_request_model.dart';
 import 'package:mini_project_1/all_auth_services/firebase_auth_services.dart';
-import 'package:mini_project_1/user/view/screens/user_home_page.dart';
 import 'package:mini_project_1/utils/colors.dart';
 import 'package:mini_project_1/utils/messages.dart';
 import 'package:mini_project_1/utils/time_and_date_formats.dart';
 import 'package:mini_project_1/utils/widgets.dart';
+import 'package:shimmer/shimmer.dart';
 
 class UserCreateRequestsPage extends StatefulWidget {
   const UserCreateRequestsPage({super.key});
@@ -128,28 +128,30 @@ class _UserCreateRequestsPageState extends State<UserCreateRequestsPage> {
         : '${selectedItems.length} Specializations selected';
   }
 
-  // void getMobileNo() async {
-  //   final user = FirebaseAuth.instance.currentUser;
-  //   if (user == null) return;
+  void getMobileNo() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
 
-  //   final doc = await FirebaseFirestore.instance
-  //       .collection('users')
-  //       .doc(user.uid)
-  //       .get();
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
 
-  //   if (doc.exists) {
-  //     final data = doc.data();
-  //     if (data != null && data['phone'] != null) {
-  //       phoneController.text = data['phone'];
-  //     }
-  //   }
-  // }
+    if (doc.exists) {
+      final data = doc.data();
+      if (data != null && data['mobile'] != null) {
+        setState(() {
+          phoneController.text = data['mobile'];
+        });
+      }
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     updateSpecializationController();
-    // getMobileNo();
+    getMobileNo(); // ✅ Get phone safely in initState
   }
 
   @override
@@ -186,7 +188,31 @@ class _UserCreateRequestsPageState extends State<UserCreateRequestsPage> {
                         .get(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const CircularProgressIndicator();
+                        return Shimmer.fromColors(
+                          baseColor: Colors.grey[300]!,
+                          highlightColor: Colors.grey[100]!,
+                          child: Row(
+                            children: [
+                              CircleAvatar(
+                                  radius: 45, backgroundColor: Colors.grey),
+                              const SizedBox(width: 10),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                      height: 20,
+                                      width: 150,
+                                      color: Colors.white),
+                                  const SizedBox(height: 5),
+                                  Container(
+                                      height: 20,
+                                      width: 100,
+                                      color: Colors.white),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
                       }
                       if (!snapshot.hasData || !snapshot.data!.exists) {
                         return const Text("User info not found");
@@ -197,7 +223,9 @@ class _UserCreateRequestsPageState extends State<UserCreateRequestsPage> {
                       return Row(
                         children: [
                           CircleAvatar(
-                              radius: 45, backgroundColor: Colors.grey[200]),
+                            radius: 45,
+                            backgroundColor: Colors.grey[200],
+                          ),
                           const SizedBox(width: 10),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -220,8 +248,9 @@ class _UserCreateRequestsPageState extends State<UserCreateRequestsPage> {
                     controller: phoneController,
                     text: 'Enter your phone no here',
                     validator: (val) {
-                      if (val == null || val.isEmpty)
+                      if (val == null || val.isEmpty) {
                         return 'Please enter your phone number';
+                      }
                       if (val.length < 10) return 'Enter a valid phone number';
                       return null;
                     },
@@ -257,13 +286,13 @@ class _UserCreateRequestsPageState extends State<UserCreateRequestsPage> {
                             return StatefulBuilder(
                               builder: (context, localSetState) {
                                 return CustomSpecificationsDialog(
-                                  headerItems: Padding(
-                                    padding: const EdgeInsets.symmetric(
+                                  headerItems: const Padding(
+                                    padding: EdgeInsets.symmetric(
                                         horizontal: 20, vertical: 18),
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
-                                      children: const [
+                                      children: [
                                         Text('Select Specializations',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold)),
@@ -292,9 +321,7 @@ class _UserCreateRequestsPageState extends State<UserCreateRequestsPage> {
                                                   selectedItems.add(item);
                                                 }
                                               });
-                                              setState(() {
-                                                updateSpecializationController();
-                                              });
+                                              updateSpecializationController();
                                             },
                                             child: Padding(
                                               padding:

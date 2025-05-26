@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:mini_project_1/common_screens/splash_screen.dart';
 import 'package:mini_project_1/firebase_options.dart';
 
@@ -23,7 +24,8 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
 
       theme: ThemeData(
-          fontFamily: 'Poppins',
+          // fontFamily: 'Poppins',
+          textTheme: GoogleFonts.poppinsTextTheme(),
           splashColor: Colors.transparent,
           highlightColor: Colors.transparent,
           hoverColor: Colors.transparent,

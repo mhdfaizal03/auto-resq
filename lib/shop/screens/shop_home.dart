@@ -1,181 +1,246 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mini_project_1/shop/models/model/product_model.dart';
 import 'package:mini_project_1/shop/screens/product_details_screen.dart';
+import 'package:mini_project_1/utils/time_and_date_formats.dart';
 import 'package:mini_project_1/utils/widgets.dart';
 
 class ShopHome extends StatelessWidget {
-  ShopHome({super.key});
+  final String shopId;
+  ShopHome({super.key, required this.shopId});
 
-  final List<Map<String, dynamic>> datas = [
-    {
-      "number": 121,
-      "detailName": "Total Products",
-      "color": Colors.blue,
-      "products": List.generate(
-          5,
-          (i) => {
-                "quantity": 3,
-                "date": "22/05/2025",
-                "image":
-                    "https://5.imimg.com/data5/SELLER/Default/2023/10/349750049/RC/TP/ZK/87613070/1-500x500.jpg",
-                "name": "Product TP-$i",
-                "price": "500",
-                "status": "Available",
-                "statusColor": Colors.green,
-              })
-    },
-    {
-      "number": 21,
-      "detailName": "Packed Products",
-      "color": Colors.red,
-      "products": List.generate(
-          3,
-          (i) => {
-                "quantity": 2,
-                "date": "21/05/2025",
-                "image":
-                    "https://5.imimg.com/data5/SELLER/Default/2023/10/349750049/RC/TP/ZK/87613070/1-500x500.jpg",
-                "name": "Packed Product $i",
-                "price": "350",
-                "status": "Packed",
-                "statusColor": Colors.orange,
-              })
-    },
-    {
-      "number": 21,
-      "detailName": "Confirmed Products",
-      "color": Colors.amber,
-      "products": List.generate(
-          4,
-          (i) => {
-                "quantity": 1,
-                "date": "23/05/2025",
-                "image":
-                    "https://5.imimg.com/data5/SELLER/Default/2023/10/349750049/RC/TP/ZK/87613070/1-500x500.jpg",
-                "name": "Confirmed Product $i",
-                "price": "620",
-                "status": "Confirmed",
-                "statusColor": Colors.blue,
-              })
-    },
-    {
-      "number": 21,
-      "detailName": "Delivered Orders",
-      "color": Colors.green,
-      "products": List.generate(
-          2,
-          (i) => {
-                "quantity": 1,
-                "date": "20/05/2025",
-                "image":
-                    "https://5.imimg.com/data5/SELLER/Default/2023/10/349750049/RC/TP/ZK/87613070/1-500x500.jpg",
-                "name": "Delivered Product $i",
-                "price": "700",
-                "status": "Delivered",
-                "statusColor": Colors.green,
-              })
-    }
-  ];
+  final user = FirebaseAuth.instance.currentUser;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        GridView.builder(
-          itemCount: datas.length,
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          gridDelegate:
-              SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-          itemBuilder: (context, index) {
-            final item = datas[index];
-            return GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => ShopDetailPage(
-                      title: item['detailName'],
-                      products: item['products'],
-                    ),
-                  ),
-                );
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(blurRadius: 1.5, color: Colors.grey)
-                    ]),
-                margin: const EdgeInsets.all(5),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        height: 80,
-                        width: 80,
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('ordered_products')
+                .where('shopId', isEqualTo: shopId)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return customLoading();
+              }
+
+              if (snapshot.hasError) {
+                return const Center(child: Text('Something went wrong.'));
+              }
+
+              final allProducts = snapshot.data?.docs ?? [];
+
+              final total = allProducts.length;
+              final packed = allProducts
+                  .where((doc) =>
+                      (doc['productStatus'] ?? '').toLowerCase() == 'packed')
+                  .length;
+              final confirmed = allProducts
+                  .where((doc) =>
+                      (doc['productStatus'] ?? '').toLowerCase() == 'confirmed')
+                  .length;
+              final delivered = allProducts
+                  .where((doc) =>
+                      (doc['productStatus'] ?? '').toLowerCase() == 'delivered')
+                  .length;
+
+              final datas = [
+                {
+                  "number": total,
+                  "detailName": "Total Orders",
+                  "color": Colors.blue,
+                },
+                {
+                  "number": packed,
+                  "detailName": "Packed Products",
+                  "color": Colors.red,
+                },
+                {
+                  "number": confirmed,
+                  "detailName": "Confirmed Products",
+                  "color": Colors.amber,
+                },
+                {
+                  "number": delivered,
+                  "detailName": "Delivered Orders",
+                  "color": Colors.green,
+                }
+              ];
+
+              return GridView.builder(
+                itemCount: datas.length,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2),
+                itemBuilder: (context, index) {
+                  final item = datas[index];
+                  final count = item['number'] as int;
+                  final isDisabled = count == 0;
+
+                  return GestureDetector(
+                    onTap: isDisabled
+                        ? null
+                        : () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => ShopDetailPage(
+                                  title: item['detailName'].toString(),
+                                  shopId: shopId,
+                                  statusFilter: _getStatusForTitle(
+                                      item['detailName'].toString()),
+                                ),
+                              ),
+                            );
+                          },
+                    child: Opacity(
+                      opacity: isDisabled ? 0.5 : 1.0,
+                      child: Container(
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(100),
-                            color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(blurRadius: 1.5, color: Colors.grey)
-                            ]),
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.white,
+                          boxShadow: const [
+                            BoxShadow(blurRadius: 1.5, color: Colors.grey),
+                          ],
+                        ),
+                        margin: const EdgeInsets.all(5),
                         child: Center(
-                          child: Text(
-                            item['number'].toString(),
-                            style: TextStyle(
-                                color: item['color'],
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                height: 80,
+                                width: 80,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(100),
+                                  color: Colors.white,
+                                  boxShadow: const [
+                                    BoxShadow(
+                                        blurRadius: 1.5, color: Colors.grey)
+                                  ],
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    count.toString(),
+                                    style: TextStyle(
+                                        color: item['color'] as Color,
+                                        fontSize: 30,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                item['detailName'].toString(),
+                                textAlign: TextAlign.center,
+                              )
+                            ],
                           ),
                         ),
                       ),
-                      SizedBox(height: 10),
-                      Text(
-                        item['detailName'].toString(),
-                        textAlign: TextAlign.center,
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
-        Padding(
-          padding: const EdgeInsets.all(10),
-          child: Text(
-            'Recent Orders',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                  );
+                },
+              );
+            },
           ),
-        ),
-        ListView.builder(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          itemCount: 5,
-          itemBuilder: (context, index) {
-            return Column(
-              children: [
-                ShopCards(
-                  productQuantity: 2.toString(),
-                  deliveryDate: '22/03/2025',
-                  productImage:
-                      'https://5.imimg.com/data5/SELLER/Default/2023/10/349750049/RC/TP/ZK/87613070/1-500x500.jpg',
-                  productName: 'Product 1',
-                  productPrice: '887',
-                  deliveryStatus: 'Pending',
-                  deliveryStatusColor: Colors.orange,
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-              ],
-            );
-          },
-        )
-      ],
+          const Padding(
+            padding: EdgeInsets.all(10),
+            child: Text(
+              'Recent Orders',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+          ),
+          StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('ordered_products')
+                .where('shopId', isEqualTo: shopId)
+                .orderBy('createdAt', descending: true)
+                .limit(5)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return customLoading();
+              }
+
+              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                return const Center(child: Text('No recent orders found.'));
+              }
+
+              final recentProducts = snapshot.data!.docs.map((doc) {
+                return ProductModel.fromMap(
+                    doc.data() as Map<String, dynamic>, doc.id);
+              }).toList();
+
+              return ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: recentProducts.length,
+                itemBuilder: (context, index) {
+                  final product = recentProducts[index];
+                  return Column(
+                    children: [
+                      ShopCards(
+                        bottomData: Text(
+                          'Delivery in ${formatDate(product.createdAt!)}',
+                          style: const TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        actualPrice: product.price.toString(),
+                        productQuantity: product.stocksLeft.toString(),
+                        deliveryDate: product.createdAt!
+                            .toLocal()
+                            .toString()
+                            .split(' ')[0],
+                        productImage: product.productImage,
+                        productName: product.productName,
+                        productPrice: product.discountPrice.toString(),
+                        deliveryStatus: product.productStatus,
+                        deliveryStatusColor:
+                            _getStatusColor(product.productStatus!),
+                      ),
+                      const SizedBox(height: 10),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+        ],
+      ),
     );
+  }
+
+  String? _getStatusForTitle(String title) {
+    switch (title) {
+      case 'Packed Products':
+        return 'Packed';
+      case 'Confirmed Products':
+        return 'Confirmed';
+      case 'Delivered Orders':
+        return 'Delivered';
+      default:
+        return null;
+    }
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'available':
+        return Colors.green;
+      case 'packed':
+        return Colors.orange;
+      case 'confirmed':
+        return Colors.blue;
+      case 'delivered':
+        return Colors.green;
+      default:
+        return Colors.grey;
+    }
   }
 }

@@ -6,8 +6,8 @@ import 'package:mini_project_1/mechanic/view/screens/mechanic_profile_page.dart'
 import 'package:mini_project_1/utils/colors.dart';
 
 class MechanicNavbarPage extends StatefulWidget {
-  int? selectedIndex = 0;
-  MechanicNavbarPage({this.selectedIndex, super.key});
+  int? selectedIndex;
+  MechanicNavbarPage({this.selectedIndex = 0, super.key});
 
   @override
   State<MechanicNavbarPage> createState() => _MechanicNavbarPageState();
@@ -101,7 +101,7 @@ class _MechanicNavbarPageState extends State<MechanicNavbarPage> {
                 SizedBox(
                   height: 10,
                 ),
-                pages[widget.selectedIndex ?? 0],
+                pages[widget.selectedIndex!],
               ],
             ),
           ),

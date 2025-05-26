@@ -1,8 +1,6 @@
-import 'package:flutter/cupertino.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mini_project_1/mechanic/view/screens/mechanic_home_page.dart';
-import 'package:mini_project_1/mechanic/view/screens/mechanic_notification_page.dart';
-import 'package:mini_project_1/mechanic/view/screens/mechanic_profile_page.dart';
+import 'package:mini_project_1/shop/screens/create_products.dart';
 import 'package:mini_project_1/shop/screens/products_page.dart';
 import 'package:mini_project_1/shop/screens/shop_home.dart';
 import 'package:mini_project_1/shop/screens/shop_notifications.dart';
@@ -18,12 +16,13 @@ class ShopNavbarPage extends StatefulWidget {
 }
 
 class _ShopNavbarPageState extends State<ShopNavbarPage> {
-  List<Widget> pages = [
-    ShopHome(),
-    ProductsPage(),
-    ShopNotifications(),
-    ShopProfile(),
-  ];
+  late final String? shopId;
+
+  @override
+  void initState() {
+    super.initState();
+    shopId = FirebaseAuth.instance.currentUser?.uid;
+  }
 
   List<Map<String, dynamic>> bottomIcons = [
     {
@@ -46,7 +45,44 @@ class _ShopNavbarPageState extends State<ShopNavbarPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (shopId == null) {
+      return const Center(
+          child: CircularProgressIndicator()); // Or error message
+    }
+
+    List<Widget> pages = [
+      ShopHome(shopId: shopId!),
+      ProductsPage(),
+      ShopNotifications(),
+      ShopProfile(),
+    ];
+
     return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: widget.selectedIndex == 1
+          ? Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15.0),
+              child: MaterialButton(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CreateProducts(),
+                    ),
+                  );
+                },
+                color: primaryColor,
+                height: 55,
+                minWidth: double.infinity,
+                child: const Text(
+                  'Add Product',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            )
+          : const SizedBox.shrink(),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           boxShadow: <BoxShadow>[
@@ -109,9 +145,7 @@ class _ShopNavbarPageState extends State<ShopNavbarPage> {
                     ],
                   ),
                 ),
-                SizedBox(
-                  height: 10,
-                ),
+                const SizedBox(height: 10),
                 pages[widget.selectedIndex ?? 0],
               ],
             ),
