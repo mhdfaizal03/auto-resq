@@ -152,7 +152,7 @@ class _SplashInnerScreenState extends State<SplashInnerScreen> {
         final isAccepted = mechanicData['isAdminAccept'] ?? 0;
 
         if (isAccepted == 1) {
-          if (isCompleted) {
+          if (isCompleted == true) {
             Navigator.pushAndRemoveUntil(
               context,
               PageRouteBuilder(
@@ -173,27 +173,26 @@ class _SplashInnerScreenState extends State<SplashInnerScreen> {
             );
           }
         } else if (isAccepted == 0) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (_) => MultiLoginPage()),
+            (route) => false,
+          );
           CustomSnackBar.show(
             context: context,
             message: 'Your request is under pending',
           );
           await Future.delayed(const Duration(seconds: 2));
+        } else if (isAccepted == 2) {
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (_) => MultiLoginPage()),
             (route) => false,
           );
-        } else if (isAccepted == 2) {
           CustomSnackBar.show(
             context: context,
             message:
                 'Your request has been rejected by admin due to some reason',
-          );
-          await Future.delayed(const Duration(seconds: 2));
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (_) => MultiLoginPage()),
-            (route) => false,
           );
         }
       } else if (shopData != null && shopData['role'] == 'Shop') {
