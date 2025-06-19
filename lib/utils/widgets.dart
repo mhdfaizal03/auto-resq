@@ -518,8 +518,12 @@ class _CustomWalletCardsState extends State<CustomWalletCards> {
 class CustomNotificationTile extends StatelessWidget {
   String title;
   String subtitle;
+  String trialing;
   CustomNotificationTile(
-      {super.key, required this.title, required this.subtitle});
+      {super.key,
+      required this.title,
+      required this.subtitle,
+      required this.trialing});
 
   @override
   Widget build(BuildContext context) {
@@ -536,17 +540,37 @@ class CustomNotificationTile extends StatelessWidget {
           ],
           color: Colors.white,
         ),
-        child: ListTile(
-          title: Text(
-            title,
-            style: TextStyle(
-                fontSize: mq.width * 0.045, fontWeight: FontWeight.bold),
-          ),
-          subtitle: Text(
-            subtitle,
-            style: TextStyle(
-              fontSize: mq.width * 0.038,
-            ),
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                    fontSize: mq.width * 0.046, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                subtitle,
+                style: TextStyle(
+                  fontSize: mq.width * 0.038,
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Text(
+                  trialing,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              )
+            ],
           ),
         ));
   }
@@ -654,7 +678,7 @@ class CustomMechanicRequestCards extends StatelessWidget {
                         height: mq.height * 0.035,
                         width: mq.width * 0.25,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(mq.width * 0.125),
+                          borderRadius: BorderRadius.circular(mq.width * 0.25),
                           color: statusColor,
                         ),
                         child: Center(
@@ -1601,7 +1625,8 @@ class ShopCards extends StatelessWidget {
 }
 
 Widget buildShimmerProfileUI() {
-    return Padding(
+  return SingleChildScrollView(
+    child: Padding(
       padding: const EdgeInsets.all(15),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -1665,7 +1690,6 @@ Widget buildShimmerProfileUI() {
               ),
             ),
           ),
-          const Spacer(),
           Shimmer.fromColors(
             baseColor: Colors.grey[300]!,
             highlightColor: Colors.grey[100]!,
@@ -1677,8 +1701,9 @@ Widget buildShimmerProfileUI() {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 
 Widget customLoading() {
   return Center(

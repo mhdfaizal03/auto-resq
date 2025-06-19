@@ -28,7 +28,11 @@ class InnerCategoriesPage extends StatelessWidget {
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return customLoading();
+                    return ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxHeight: MediaQuery.of(context).size.height * .7,
+                        ),
+                        child: customLoading());
                   }
 
                   if (snapshot.hasError) {
@@ -38,9 +42,11 @@ class InnerCategoriesPage extends StatelessWidget {
                   final products = snapshot.data?.docs ?? [];
 
                   if (products.isEmpty) {
-                    return const Center(
-                      child: Padding(
-                        padding: EdgeInsets.only(top: 30),
+                    return ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxHeight: MediaQuery.of(context).size.height * .7,
+                      ),
+                      child: const Center(
                         child: Text('No products available'),
                       ),
                     );
@@ -92,7 +98,7 @@ class InnerCategoriesPage extends StatelessWidget {
                                     fit: BoxFit.contain,
                                     errorBuilder:
                                         (context, error, stackTrace) =>
-                                            const Icon(Icons.broken_image),
+                                            const Icon(Icons.info),
                                   ),
                                 ),
                               ),

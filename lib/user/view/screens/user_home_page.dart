@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -21,7 +22,7 @@ class UserHomePage extends StatefulWidget {
 
 class _UserHomePageState extends State<UserHomePage> {
   static int selectIndex = 0;
-  List<String> tabs = ['Requested', 'Completed & Rejected'];
+  List<String> tabs = ['Requested', 'Others'];
 
   @override
   Widget build(BuildContext context) {
@@ -77,9 +78,10 @@ class _UserHomePageState extends State<UserHomePage> {
           ),
         ),
         const SizedBox(height: 10),
-        StreamBuilder<QuerySnapshot>(
+        StreamBuilder(
           stream: FirebaseFirestore.instance
               .collection('mechanic_requests')
+              .where('id', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
               .orderBy('createdAt', descending: true)
               .snapshots(),
           builder: (context, snapshot) {
@@ -94,10 +96,16 @@ class _UserHomePageState extends State<UserHomePage> {
                 .toList();
 
             return requests.isEmpty
-                ? Center(
-                    child: Text(
-                      'No ${tabs[selectIndex]} transactions found',
-                      style: const TextStyle(fontSize: 18, color: Colors.grey),
+                ? ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: MediaQuery.of(context).size.height * .55,
+                    ),
+                    child: Center(
+                      child: Text(
+                        'No ${tabs[selectIndex]} transactions found',
+                        style:
+                            const TextStyle(fontSize: 18, color: Colors.grey),
+                      ),
                     ),
                   )
                 : ListView.builder(

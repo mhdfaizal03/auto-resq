@@ -88,8 +88,8 @@ class FirebaseAuthServices {
     }
   }
 
-  void logoutUser() {
-    _auth.signOut();
+  void logoutUser() async {
+    await _auth.signOut();
   }
 }
 

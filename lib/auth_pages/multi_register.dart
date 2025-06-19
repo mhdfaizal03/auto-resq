@@ -220,7 +220,8 @@ class _MultiRoleRegisterPageState extends State<MultiRoleRegisterPage> {
                       if (selectedRole == 'Mechanic') {
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (_) => MultiLoginPage()),
+                          MaterialPageRoute(
+                              builder: (_) => ProfessionalDetailsPage()),
                         );
                       } else if (selectedRole == 'Shop') {
                         Navigator.pushReplacement(

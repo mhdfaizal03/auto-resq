@@ -36,16 +36,16 @@ class ShopHome extends StatelessWidget {
 
               final total = allProducts.length;
               final packed = allProducts
-                  .where((doc) =>
-                      (doc['productStatus'] ?? '').toLowerCase() == 'packed')
+                  .where(
+                      (doc) => (doc['status'] ?? '').toLowerCase() == 'shipped')
                   .length;
               final confirmed = allProducts
                   .where((doc) =>
-                      (doc['productStatus'] ?? '').toLowerCase() == 'confirmed')
+                      (doc['status'] ?? '').toLowerCase() == 'confirmed')
                   .length;
               final delivered = allProducts
                   .where((doc) =>
-                      (doc['productStatus'] ?? '').toLowerCase() == 'delivered')
+                      (doc['status'] ?? '').toLowerCase() == 'delivered')
                   .length;
 
               final datas = [
@@ -159,23 +159,30 @@ class ShopHome extends StatelessWidget {
           StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
                 .collection('ordered_products')
-                .where('shopId', isEqualTo: shopId)
-                .orderBy('createdAt', descending: true)
+                .where('shopId', isEqualTo: user?.uid)
+                // .orderBy('createAt', descending: true)
                 .limit(5)
                 .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return customLoading();
+                return ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height * .25,
+                  ),
+                  child: customLoading(),
+                );
               }
 
               if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                return const Center(child: Text('No recent orders found.'));
+                return ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height * .25,
+                  ),
+                  child: const Center(child: Text('No recent orders found.')),
+                );
               }
 
-              final recentProducts = snapshot.data!.docs.map((doc) {
-                return ProductModel.fromMap(
-                    doc.data() as Map<String, dynamic>, doc.id);
-              }).toList();
+              final recentProducts = snapshot.data!.docs;
 
               return ListView.builder(
                 shrinkWrap: true,
@@ -187,22 +194,19 @@ class ShopHome extends StatelessWidget {
                     children: [
                       ShopCards(
                         bottomData: Text(
-                          'Delivery in ${formatDate(product.createdAt!)}',
+                          'Delivery in',
                           style: const TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),
-                        actualPrice: product.price.toString(),
-                        productQuantity: product.stocksLeft.toString(),
-                        deliveryDate: product.createdAt!
-                            .toLocal()
-                            .toString()
-                            .split(' ')[0],
-                        productImage: product.productImage,
-                        productName: product.productName,
-                        productPrice: product.discountPrice.toString(),
-                        deliveryStatus: product.productStatus,
+                        actualPrice: product['price'].toString(),
+                        productQuantity: product['quantity'].toString(),
+                        deliveryDate: dateFormatter(product['createAt']),
+                        productImage: product['image'],
+                        productName: product['productName'],
+                        productPrice: product['totalPrice'].toString(),
+                        deliveryStatus: product['status'],
                         deliveryStatusColor:
-                            _getStatusColor(product.productStatus!),
+                            _getStatusColor(product['status'] ?? ''),
                       ),
                       const SizedBox(height: 10),
                     ],
@@ -219,7 +223,7 @@ class ShopHome extends StatelessWidget {
   String? _getStatusForTitle(String title) {
     switch (title) {
       case 'Packed Products':
-        return 'Packed';
+        return 'Shipped';
       case 'Confirmed Products':
         return 'Confirmed';
       case 'Delivered Orders':
@@ -234,9 +238,9 @@ class ShopHome extends StatelessWidget {
       case 'available':
         return Colors.green;
       case 'packed':
-        return Colors.orange;
+        return Colors.red;
       case 'confirmed':
-        return Colors.blue;
+        return Colors.orange;
       case 'delivered':
         return Colors.green;
       default:

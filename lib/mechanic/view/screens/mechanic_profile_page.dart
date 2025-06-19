@@ -119,11 +119,11 @@ class _MechanicProfilePageState extends State<MechanicProfilePage> {
                           ),
                         ),
                       );
-                    } else {
-                      Navigator.pushAndRemoveUntil(
+                    } else if (item['page'] != null) {
+                      Navigator.push(
                         context,
-                        MaterialPageRoute(builder: item['page']),
-                        (route) => item['route'],
+                        MaterialPageRoute(
+                            builder: (_) => item['page'](context)),
                       );
                     }
                   },

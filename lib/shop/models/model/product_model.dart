@@ -39,13 +39,14 @@ class ProductModel {
     this.brandName,
   });
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toMap(String? productIds) {
     return {
+      'productId': productIds,
       'productName': productName,
       'productDescription': productDescription,
       'productCategory': productCategory,
       'productSpecification': productSpecification,
-      'productStatus': productStatus,
+      'status': productStatus,
       'productImage': productImage,
       'price': price,
       'discountPrice': discountPrice,
@@ -67,7 +68,7 @@ class ProductModel {
       productDescription: map['productDescription'] ?? '',
       productCategory: map['productCategory'] ?? '',
       productSpecification: map['productSpecification'] ?? '',
-      productStatus: map['productStatus'] ?? 'Pending',
+      productStatus: map['status'] ?? 'Pending',
       productImage: map['productImage'] ?? '',
       price: (map['price'] ?? 0).toDouble(),
       discountPrice: (map['discountPrice'] ?? 0).toDouble(),

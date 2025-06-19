@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mini_project_1/common_screens/notification_page.dart';
 import 'package:mini_project_1/shop/screens/create_products.dart';
 import 'package:mini_project_1/shop/screens/products_page.dart';
 import 'package:mini_project_1/shop/screens/shop_home.dart';
-import 'package:mini_project_1/shop/screens/shop_notifications.dart';
 import 'package:mini_project_1/shop/screens/shop_profile.dart';
 import 'package:mini_project_1/utils/colors.dart';
 
@@ -53,7 +53,7 @@ class _ShopNavbarPageState extends State<ShopNavbarPage> {
     List<Widget> pages = [
       ShopHome(shopId: shopId!),
       ProductsPage(),
-      ShopNotifications(),
+      NotificationPageByRole(role: 'Shop'),
       ShopProfile(),
     ];
 

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mini_project_1/user/models/service/order_services.dart';
+import 'package:mini_project_1/user/view/screens/buy_now_page.dart';
 import 'package:mini_project_1/utils/widgets.dart';
 
 class ProductDetailsPage extends StatefulWidget {
@@ -31,7 +33,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   product['productImage'] ?? '',
                   fit: BoxFit.contain,
                   errorBuilder: (context, error, stackTrace) =>
-                      const Icon(Icons.broken_image),
+                      const Icon(Icons.info),
                 ),
               ),
               const SizedBox(height: 20),
@@ -58,9 +60,9 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                             color: Colors.black,
                             fontWeight: FontWeight.bold),
                       ),
-                      Text(
+                      const Text(
                         'Free Delivery',
-                        style: const TextStyle(
+                        style: TextStyle(
                             fontSize: 13,
                             color: Colors.green,
                             fontWeight: FontWeight.bold),
@@ -116,9 +118,22 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       floatingActionButton: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: SizedBox(
-            height: 50,
-            child:
-                CustomMaterialButtom(onPressed: () {}, buttonText: 'Buy Now')),
+          height: 50,
+          child: CustomMaterialButtom(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BuyNowPage(
+                    product: product,
+                    shopId: product['shopId'],
+                  ),
+                ),
+              );
+            },
+            buttonText: 'Buy Now',
+          ),
+        ),
       ),
     );
   }

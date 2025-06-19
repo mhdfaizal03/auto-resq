@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mini_project_1/common_screens/notification_page.dart';
 import 'package:mini_project_1/mechanic/view/screens/mechanic_home_page.dart';
-import 'package:mini_project_1/mechanic/view/screens/mechanic_notification_page.dart';
 import 'package:mini_project_1/mechanic/view/screens/mechanic_profile_page.dart';
 import 'package:mini_project_1/utils/colors.dart';
 
@@ -16,7 +16,7 @@ class MechanicNavbarPage extends StatefulWidget {
 class _MechanicNavbarPageState extends State<MechanicNavbarPage> {
   List<Widget> pages = [
     MechanicHomePage(),
-    MechanicNotificationPage(),
+    NotificationPageByRole(role: 'Mechanic'),
     MechanicProfilePage(),
   ];
 

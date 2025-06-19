@@ -64,9 +64,10 @@ class _MultiLoginPageState extends State<MultiLoginPage> {
 
           if (isProfessionalDataCompleted) {
             if (isAccepted == 1) {
-              Navigator.pushReplacement(
+              Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (_) => MechanicNavbarPage()),
+                (route) => false,
               );
             } else if (isAccepted == 0) {
               CustomSnackBar.show(
@@ -87,14 +88,17 @@ class _MultiLoginPageState extends State<MultiLoginPage> {
               _passwordController.clear();
             }
           } else {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (_) => ProfessionalDetailsPage()),
-            );
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (_) => ProfessionalDetailsPage()),
+                (route) => false);
           }
         } else if (role == 'Shop') {
-          Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (_) => ShopNavbarPage()));
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (_) => ShopNavbarPage()),
+            (route) => false,
+          );
           CustomSnackBar.show(
             context: context,
             message: 'Login Successful',
@@ -102,8 +106,11 @@ class _MultiLoginPageState extends State<MultiLoginPage> {
             color: Colors.green,
           );
         } else if (role == 'Admin') {
-          Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (_) => AdminNavbarScreen()));
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (_) => AdminNavbarScreen()),
+            (route) => false,
+          );
           CustomSnackBar.show(
             context: context,
             message: 'Login Successful',
@@ -111,8 +118,11 @@ class _MultiLoginPageState extends State<MultiLoginPage> {
             color: Colors.green,
           );
         } else if (role == 'User') {
-          Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (_) => UserNavPage()));
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (_) => UserNavPage()),
+            (route) => false,
+          );
           CustomSnackBar.show(
             context: context,
             message: 'Login Successful',

@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mini_project_1/admin/view/profile/profile_screen.dart';
 import 'package:mini_project_1/admin/view/screens/home/mechanic_home_screen.dart';
-import 'package:mini_project_1/admin/view/screens/notification_page.dart';
+import 'package:mini_project_1/common_screens/notification_page.dart';
 import 'package:mini_project_1/admin/view/screens/notifications_create.dart';
 import 'package:mini_project_1/admin/view/screens/wallet/wallet_tab.dart';
 import 'package:mini_project_1/common_screens/toggle_button_screen.dart';
@@ -21,7 +21,7 @@ class _AdminNavbarScreenState extends State<AdminNavbarScreen> {
   List<Widget> pages = [
     ToggleButtonScreen(),
     WalletTab(),
-    NotificationPage(),
+    NotificationPageByRole(role: 'All'),
   ];
 
   // int selectedIndex = 0;

@@ -24,17 +24,17 @@ class _ShopProfileState extends State<ShopProfile> {
     {
       'title': 'Confirmed Orders',
       'leading': 'assets/icons/check_circle.png',
-      'status': 'confirmed',
+      'status': 'Confirmed',
     },
     {
       'title': 'Packed Orders',
       'leading': 'assets/icons/packed_orders.png',
-      'status': 'packed',
+      'status': 'Packed',
     },
     {
       'title': 'Delivered Orders',
       'leading': 'assets/icons/delivered_orders.png',
-      'status': 'delivered',
+      'status': 'Delivered',
     },
   ];
 
@@ -91,7 +91,7 @@ class _ShopProfileState extends State<ShopProfile> {
                       final querySnapshot = await FirebaseFirestore.instance
                           .collection('ordered_products')
                           .where('shopId', isEqualTo: uid)
-                          .where('orderStatus', isEqualTo: item['status'])
+                          .where('status', isEqualTo: item['status'])
                           .get();
 
                       if (querySnapshot.docs.isEmpty) {

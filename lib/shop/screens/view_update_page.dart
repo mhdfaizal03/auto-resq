@@ -225,10 +225,8 @@ class _ViewUpdatePageState extends State<ViewUpdatePage> {
                           color: Colors.red,
                           onPressed: () async {
                             try {
-                              final shopId =
-                                  FirebaseAuth.instance.currentUser!.uid;
                               await _productServices.deleteProduct(
-                                shopId,
+                                widget.product.productId.toString(),
                               );
                               Navigator.pop(context);
                               CustomSnackBar.show(
@@ -268,7 +266,7 @@ class _ViewUpdatePageState extends State<ViewUpdatePage> {
                                     FirebaseAuth.instance.currentUser!.uid;
 
                                 await _productServices.updateProduct(
-                                  shopId,
+                                  widget.product.productId.toString(),
                                   ProductModel(
                                     productId: widget.product.productId,
                                     brandName: brandNameController.text,

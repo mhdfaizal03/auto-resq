@@ -3,12 +3,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mini_project_1/admin/view/profile/terms_and_co.dart';
 import 'package:mini_project_1/auth_pages/multi_register.dart';
+import 'package:mini_project_1/common_screens/notification_page.dart';
 import 'package:mini_project_1/mechanic/view/auth/create_account/professional_details_page.dart';
 import 'package:mini_project_1/common_screens/profile_details.dart';
 import 'package:mini_project_1/all_auth_services/firebase_auth_services.dart';
 import 'package:mini_project_1/auth_pages/multi_login.dart';
 import 'package:mini_project_1/user/view/screens/my_orders_page.dart';
-import 'package:mini_project_1/user/view/screens/user_notification.dart';
 import 'package:mini_project_1/utils/messages.dart';
 import 'package:mini_project_1/utils/widgets.dart';
 
@@ -77,7 +77,7 @@ class _UserProfileState extends State<UserProfile> {
                         children: const [
                           CustomBackButton(),
                           SizedBox(height: 10),
-                          UserNotification(),
+                          NotificationPageByRole(role: 'User')
                         ],
                       ),
                     ),

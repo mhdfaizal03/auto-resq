@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mini_project_1/common_screens/notification_page.dart';
 import 'package:mini_project_1/user/view/screens/user_home_page.dart';
-import 'package:mini_project_1/user/view/screens/user_notification.dart';
 import 'package:mini_project_1/user/view/screens/user_profile.dart';
 import 'package:mini_project_1/user/view/screens/user_create_requests_page.dart';
 import 'package:mini_project_1/user/view/screens/user_shop.dart';
@@ -17,7 +17,7 @@ class _UserNavPageState extends State<UserNavPage> {
   List<Widget> pages = [
     UserHomePage(),
     UserShop(),
-    UserNotification(),
+    NotificationPageByRole(role: 'User'),
     UserProfile(),
   ];
 

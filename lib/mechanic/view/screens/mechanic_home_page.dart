@@ -99,12 +99,17 @@ class _MechanicHomePageState extends State<MechanicHomePage> {
               }).toList();
 
               if (filtered.isEmpty) {
-                return Center(
-                  child: Text(
-                    selectedIndex == 0
-                        ? 'No new requests available.'
-                        : 'You have no accepted requests.',
-                    style: const TextStyle(fontSize: 16, color: Colors.grey),
+                return ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height * .55,
+                  ),
+                  child: Center(
+                    child: Text(
+                      selectedIndex == 0
+                          ? 'No new requests available.'
+                          : 'You have no accepted requests.',
+                      style: const TextStyle(fontSize: 16, color: Colors.grey),
+                    ),
                   ),
                 );
               }
